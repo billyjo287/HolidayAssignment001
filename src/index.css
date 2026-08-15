@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@theme {
+  --color-ink-950: #0d1017;
+  --color-ink-900: #12141c;
+  --color-ink-800: #1a1d29;
+  --color-ink-700: #242838;
+  --color-ink-600: #323752;
+
+  --color-parchment-100: #f6efe0;
+  --color-parchment-200: #f1e9d8;
+  --color-parchment-300: #e6d9bd;
+
+  --color-brass-400: #c9a45f;
+  --color-brass-500: #b08d57;
+  --color-brass-600: #8f7040;
+
+  --color-burgundy-500: #7a2e2e;
+  --color-burgundy-400: #9c4444;
+
+  --color-sage-500: #8a9b6e;
+  --color-sage-400: #a3b586;
+
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Source Serif 4', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-ink-900);
+  color: var(--color-parchment-200);
+  font-family: var(--font-body);
+  background-image:
+    radial-gradient(circle at 20% 0%, rgba(176, 141, 87, 0.08), transparent 45%),
+    radial-gradient(circle at 90% 20%, rgba(122, 46, 46, 0.10), transparent 40%);
+}
+
+::selection {
+  background: var(--color-brass-500);
+  color: var(--color-ink-950);
+}
+
+
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--color-ink-900); }
+::-webkit-scrollbar-thumb { background: var(--color-ink-600); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-brass-600); }
+
+.call-number {
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
