@@ -3,17 +3,23 @@ import Navbar from './components/Navbar.jsx'
 import Hero3D from './components/Hero3D.jsx'
 import Catalog from './components/Catalog.jsx'
 import AddBookForm from './components/AddBookForm.jsx'
-import { SAMPLE_BOOKS } from './data/sampleBooks.js'
-import { loadBooks, saveBooks } from './utils/storage.js'
+import Members from './components/Members.jsx'
+import { SAMPLE_BOOKS, SAMPLE_MEMBERS } from './data/sampleBooks.js'
+import { loadBooks, saveBooks, loadMembers, saveMembers } from './utils/storage.js'
 
 function App() {
   const [view, setView] = useState('home')
   const [books, setBooks] = useState(() => loadBooks(SAMPLE_BOOKS))
+  const [members, setMembers] = useState(() => loadMembers(SAMPLE_MEMBERS))
   const [addOpen, setAddOpen] = useState(false)
 
   useEffect(() => {
     saveBooks(books)
   }, [books])
+
+  useEffect(() => {
+    saveMembers(members)
+  }, [members])
 
   function handleCheckout(book) {
     setBooks((prev) =>
@@ -56,6 +62,12 @@ function App() {
       {view === 'catalog' && (
         <main className="flex-1">
           <Catalog books={books} onCheckout={handleCheckout} onAddClick={() => setAddOpen(true)} />
+        </main>
+      )}
+
+      {view === 'members' && (
+        <main className="flex-1">
+          <Members members={members} onAddMember={(m) => setMembers((prev) => [...prev, m])} />
         </main>
       )}
 
