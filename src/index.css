@@ -1,6 +1,5 @@
-@import "tailwindcss";
-
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
 
 @theme {
   --color-ink-950: #0d1017;
@@ -46,7 +45,7 @@ body {
   color: var(--color-ink-950);
 }
 
-
+/* Ledger-style scrollbar */
 ::-webkit-scrollbar { width: 10px; }
 ::-webkit-scrollbar-track { background: var(--color-ink-900); }
 ::-webkit-scrollbar-thumb { background: var(--color-ink-600); border-radius: 6px; }
@@ -55,6 +54,12 @@ body {
 .call-number {
   font-family: var(--font-mono);
   letter-spacing: 0.08em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brass-400);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {
