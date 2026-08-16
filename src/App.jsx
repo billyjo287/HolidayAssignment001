@@ -4,6 +4,7 @@ import Hero3D from './components/Hero3D.jsx'
 import Catalog from './components/Catalog.jsx'
 import AddBookForm from './components/AddBookForm.jsx'
 import Members from './components/Members.jsx'
+import CheckoutModal from './components/CheckoutModal.jsx'
 import { SAMPLE_BOOKS, SAMPLE_MEMBERS } from './data/sampleBooks.js'
 import { loadBooks, saveBooks, loadMembers, saveMembers } from './utils/storage.js'
 
@@ -12,6 +13,7 @@ function App() {
   const [books, setBooks] = useState(() => loadBooks(SAMPLE_BOOKS))
   const [members, setMembers] = useState(() => loadMembers(SAMPLE_MEMBERS))
   const [addOpen, setAddOpen] = useState(false)
+  const [checkoutBook, setCheckoutBook] = useState(null)
 
   useEffect(() => {
     saveBooks(books)
@@ -21,11 +23,14 @@ function App() {
     saveMembers(members)
   }, [members])
 
-  function handleCheckout(book) {
+  function confirmCheckout(book, memberId) {
     setBooks((prev) =>
       prev.map((b) =>
         b.id === book.id && b.available > 0 ? { ...b, available: b.available - 1 } : b
       )
+    )
+    setMembers((prev) =>
+      prev.map((m) => (m.id === memberId ? { ...m, booksOut: m.booksOut + 1 } : m))
     )
   }
 
@@ -61,7 +66,7 @@ function App() {
 
       {view === 'catalog' && (
         <main className="flex-1">
-          <Catalog books={books} onCheckout={handleCheckout} onAddClick={() => setAddOpen(true)} />
+          <Catalog books={books} onCheckout={setCheckoutBook} onAddClick={() => setAddOpen(true)} />
         </main>
       )}
 
@@ -75,6 +80,13 @@ function App() {
         open={addOpen}
         onClose={() => setAddOpen(false)}
         onAdd={(book) => setBooks((prev) => [book, ...prev])}
+      />
+
+      <CheckoutModal
+        book={checkoutBook}
+        members={members}
+        onClose={() => setCheckoutBook(null)}
+        onConfirm={confirmCheckout}
       />
     </div>
   )
