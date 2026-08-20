@@ -24,7 +24,6 @@ function App() {
   const [members, setMembers] = useState(() => loadMembers(SAMPLE_MEMBERS))
   const [addOpen, setAddOpen] = useState(false)
   const [checkoutBook, setCheckoutBook] = useState(null)
-  const [overdueOnly, setOverdueOnly] = useState(false)
 
   useEffect(() => {
     saveBooks(books)
@@ -42,6 +41,17 @@ function App() {
     )
     setMembers((prev) =>
       prev.map((m) => (m.id === memberId ? { ...m, booksOut: m.booksOut + 1 } : m))
+    )
+  }
+
+  function handleReturn(book) {
+    setBooks((prev) =>
+      prev.map((b) =>
+        b.id === book.id && b.available < b.copies ? { ...b, available: b.available + 1 } : b
+      )
+    )
+    setMembers((prev) =>
+      prev.map((m) => (m.booksOut > 0 ? { ...m, booksOut: m.booksOut - 1 } : m))
     )
   }
 
@@ -90,7 +100,7 @@ function App() {
 
         {view === 'dashboard' && (
           <motion.main key="dashboard" {...pageTransition} className="flex-1">
-            <Dashboard books={books} members={members} overdueOnly={overdueOnly} onToggleOverdue={() => setOverdueOnly((v) => !v)} />
+            <Dashboard books={books} members={members} onReturn={handleReturn} />
           </motion.main>
         )}
       </AnimatePresence>

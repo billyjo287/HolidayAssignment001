@@ -24,7 +24,7 @@ function StatCard({ icon, label, value, tone = 'brass', delay = 0 }) {
   )
 }
 
-export default function Dashboard({ books, members, overdueOnly, onToggleOverdue }) {
+export default function Dashboard({ books, members, onReturn }) {
   const stats = useMemo(() => {
     const totalCopies = books.reduce((sum, b) => sum + b.copies, 0)
     const onLoan = books.reduce((sum, b) => sum + (b.copies - b.available), 0)
@@ -32,34 +32,22 @@ export default function Dashboard({ books, members, overdueOnly, onToggleOverdue
     return { totalTitles: books.length, totalCopies, onLoan, overdueRisk, members: members.length }
   }, [books, members])
 
-  const visibleBooks = overdueOnly ? books.filter((b) => b.available === 0) : books
-
   const chartData = useMemo(
     () =>
-      visibleBooks
+      books
         .map((b) => ({ name: b.title.length > 14 ? b.title.slice(0, 14) + '…' : b.title, onLoan: b.copies - b.available }))
         .filter((d) => d.onLoan > 0),
-    [visibleBooks]
+    [books]
   )
+
+  const onLoanBooks = useMemo(() => books.filter((b) => b.available < b.copies), [books])
 
   return (
     <section className="max-w-6xl mx-auto px-6 md:px-10 py-12">
       <p className="call-number text-brass-400 text-xs uppercase tracking-widest mb-2">
         At a glance
       </p>
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="font-[var(--font-display)] text-3xl text-parchment-100">Circulation</h2>
-        <button
-          onClick={onToggleOverdue}
-          className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-            overdueOnly
-              ? 'bg-burgundy-500/20 border-burgundy-400/50 text-burgundy-400'
-              : 'border-ink-700 text-parchment-300/60 hover:text-parchment-100'
-          }`}
-        >
-          {overdueOnly ? 'Showing: fully checked-out titles' : 'Show fully checked-out titles only'}
-        </button>
-      </div>
+      <h2 className="font-[var(--font-display)] text-3xl text-parchment-100 mb-8">Circulation</h2>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
         <StatCard icon="ph:books-duotone" label="Titles in the catalog" value={stats.totalTitles} delay={0} />
@@ -89,6 +77,29 @@ export default function Dashboard({ books, members, overdueOnly, onToggleOverdue
           </ResponsiveContainer>
         )}
       </div>
+
+      {onLoanBooks.length > 0 && (
+        <div className="rounded-xl border border-ink-700 bg-ink-800/60 p-5 mt-6">
+          <h3 className="text-sm text-parchment-300/70 mb-4">Process a return</h3>
+          <ul className="divide-y divide-ink-700">
+            {onLoanBooks.map((b) => (
+              <li key={b.id} className="flex items-center justify-between py-3">
+                <div>
+                  <p className="text-parchment-100">{b.title}</p>
+                  <p className="call-number text-xs text-parchment-300/50">{b.callNumber}</p>
+                </div>
+                <button
+                  onClick={() => onReturn(b)}
+                  className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full bg-sage-500/15 text-sage-400 hover:bg-sage-500/25 transition-colors"
+                >
+                  <Icon icon="ph:arrow-u-down-left-duotone" />
+                  Return
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </section>
   )
 }
