@@ -24,7 +24,7 @@ function StatCard({ icon, label, value, tone = 'brass', delay = 0 }) {
   )
 }
 
-export default function Dashboard({ books, members }) {
+export default function Dashboard({ books, members, overdueOnly, onToggleOverdue }) {
   const stats = useMemo(() => {
     const totalCopies = books.reduce((sum, b) => sum + b.copies, 0)
     const onLoan = books.reduce((sum, b) => sum + (b.copies - b.available), 0)
@@ -32,12 +32,14 @@ export default function Dashboard({ books, members }) {
     return { totalTitles: books.length, totalCopies, onLoan, overdueRisk, members: members.length }
   }, [books, members])
 
+  const visibleBooks = overdueOnly ? books.filter((b) => b.available === 0) : books
+
   const chartData = useMemo(
     () =>
-      books
+      visibleBooks
         .map((b) => ({ name: b.title.length > 14 ? b.title.slice(0, 14) + '…' : b.title, onLoan: b.copies - b.available }))
         .filter((d) => d.onLoan > 0),
-    [books]
+    [visibleBooks]
   )
 
   return (
@@ -45,7 +47,19 @@ export default function Dashboard({ books, members }) {
       <p className="call-number text-brass-400 text-xs uppercase tracking-widest mb-2">
         At a glance
       </p>
-      <h2 className="font-[var(--font-display)] text-3xl text-parchment-100 mb-8">Circulation</h2>
+      <div className="flex items-center justify-between mb-8">
+        <h2 className="font-[var(--font-display)] text-3xl text-parchment-100">Circulation</h2>
+        <button
+          onClick={onToggleOverdue}
+          className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+            overdueOnly
+              ? 'bg-burgundy-500/20 border-burgundy-400/50 text-burgundy-400'
+              : 'border-ink-700 text-parchment-300/60 hover:text-parchment-100'
+          }`}
+        >
+          {overdueOnly ? 'Showing: fully checked-out titles' : 'Show fully checked-out titles only'}
+        </button>
+      </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
         <StatCard icon="ph:books-duotone" label="Titles in the catalog" value={stats.totalTitles} delay={0} />
